@@ -1,0 +1,50 @@
+def calculate_beam_shear(length: float, load: float, position: float) -> dict:
+    """
+    Calculates the support reactions and shear force at a specific point 
+    on a simply supported beam with a Uniformly Distributed Load (UDL).
+    
+    Parameters:
+    length (float): Total length of the beam in meters (m)
+    load (float): Uniformly Distributed Load in kilonewtons per meter (kN/m)
+    position (float): Distance from the left support to the point of interest (m)
+    
+    Returns:
+    dict: Calculated reaction forces, max shear, and shear at the specific position.
+    """
+    # Validate position boundaries
+    if position < 0 or position > length:
+        raise ValueError("Position must be between 0 and the total length of the beam.")
+        
+    # For a symmetrical UDL, total load is w * L, split evenly between supports
+    reaction_left = (load * length) / 2
+    reaction_right = reaction_left
+    
+    # Shear force at distance x: V_x = R_A - (w * x)
+    shear_at_position = reaction_left - (load * position)
+    
+    # Maximum shear force occurs at the immediate face of the supports
+    max_shear = reaction_left
+    
+    return {
+        "Reaction Left (Ra)": round(reaction_left, 2),
+        "Reaction Right (Rb)": round(reaction_right, 2),
+        "Max Shear Force": round(max_shear, 2),
+        "Shear at x": round(shear_at_position, 2)
+    }
+
+# --- Example Usage ---
+if __name__ == "__main__":
+    # Define beam properties
+    beam_length = 6.0    # meters
+    udl_weight = 15.0    # kN/m
+    point_x = 2.0        # meters from the left support
+    
+    # Run calculation
+    results = calculate_beam_shear(beam_length, udl_weight, point_x)
+    
+    # Print report
+    print(f"--- Structural Analysis Report ---")
+    print(f"Beam Profile: {beam_length}m span with {udl_weight} kN/m UDL")
+    print(f"---------------------------------")
+    for key, value in results.items():
+        print(f"{key}: {value} kN")
